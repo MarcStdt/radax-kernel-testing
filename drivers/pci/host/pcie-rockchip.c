@@ -586,25 +586,37 @@ static int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
 		return err;
 	}
 
+    dev_err(dev, "Sleep 1\n");
+    msleep(10000)
 	/* Fix the transmitted FTS count desired to exit from L0s. */
 	status = rockchip_pcie_read(rockchip, PCIE_CORE_CTRL_PLC1);
 	status = (status & ~PCIE_CORE_CTRL_PLC1_FTS_MASK) |
 		 (PCIE_CORE_CTRL_PLC1_FTS_CNT << PCIE_CORE_CTRL_PLC1_FTS_SHIFT);
 	rockchip_pcie_write(rockchip, status, PCIE_CORE_CTRL_PLC1);
 
+    dev_err(dev, "Sleep 2\n");
+    msleep(10000)
 	rockchip_pcie_set_power_limit(rockchip);
 
+    dev_err(dev, "Sleep 3\n");
+    msleep(10000)
 	/* Set RC's clock architecture as common clock */
 	status = rockchip_pcie_read(rockchip, PCIE_RC_CONFIG_LCS);
 	status |= PCI_EXP_LNKCTL_CCC;
 	rockchip_pcie_write(rockchip, status, PCIE_RC_CONFIG_LCS);
 
+    dev_err(dev, "Sleep 4\n");
+    msleep(10000)
 	/* Enable Gen1 training */
 	rockchip_pcie_write(rockchip, PCIE_CLIENT_LINK_TRAIN_ENABLE,
 			    PCIE_CLIENT_CONFIG);
 
+    dev_err(dev, "Sleep 5\n");
+    msleep(10000)
 	gpiod_set_value(rockchip->ep_gpio, 1);
 
+    dev_err(dev, "Sleep 6\n");
+    msleep(10000)
 	/* 500ms timeout value should be enough for Gen1/2 training */
 	err = readl_poll_timeout(rockchip->apb_base + PCIE_CLIENT_BASIC_STATUS1,
 				 status, PCIE_LINK_UP(status), 20,
