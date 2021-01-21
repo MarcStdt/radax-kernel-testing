@@ -608,9 +608,9 @@ static int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
 	/* 500ms timeout value should be enough for Gen1/2 training */
 	err = readl_poll_timeout(rockchip->apb_base + PCIE_CLIENT_BASIC_STATUS1,
 				 status, PCIE_LINK_UP(status), 20,
-				 500 * USEC_PER_MSEC);
+				 50000 * USEC_PER_MSEC);
 	if (err) {
-		dev_err(dev, "PCIe link training gen1 timeout!\n");
+		dev_err(dev, "PCIe link training gen1 timeout! ASD\n");
 		return -ETIMEDOUT;
 	}
 
@@ -1384,7 +1384,9 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
 		err = -ENOMEM;
 		goto err_free_res;
 	}
-
+	dev_info(dev, "WAITING 2secs for pcie\n");
+	msleep(2000);
+	dev_info(dev, "Waiting is over");
 	bus = pci_scan_root_bus(&pdev->dev, 0, &rockchip_pcie_ops, rockchip, &res);
 	if (!bus) {
 		err = -ENOMEM;
